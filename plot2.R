@@ -17,7 +17,7 @@ data$DateTime <- strptime(paste(data$Date, data$Time),format="%d/%m/%Y %H:%M:%S"
 
 
 # get the relevant data only
-relevant <- data[grep("2007-02-0[1|2]",data$DateTime,]
+relevant <- data[grep("2007-02-0[1|2]",data$DateTime),]
 
 #head(relevant)
 #head(relevant[,c("Date","Time", "Global_active_power","DateTime","DayOfWeek")])
