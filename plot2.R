@@ -1,16 +1,32 @@
-# setwd('C:/www/r/exdata-project1')
+#setwd('C:/www/r/exdata-project1')
 
-# download, unzip, and read file
-temp <- tempfile()
-download.file("https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2Fhousehold_power_consumption.zip",temp)
-data <- read.table( unz( temp, "household_power_consumption.txt" )
-                   , nrows = 100000
-                   , sep = ";"
-                   #   , colClasses = c("POSIXct", "POSIXct","numeric")
-                   , header = TRUE
-)
-unlink(temp)
+if( !file.exists("household_power_consumption.txt") ) { # go get the file
+    # download, unzip, and read file
+    download.file("https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2Fhousehold_power_consumption.zip","household_power_consumption.zip")
+    unzip( "household_power_consumption.zip")
+    data <- read.table( "household_power_consumption.txt"
+                        , nrows = 100000
+                        , sep = ";"
+                        , header = TRUE
+    )
 
+# download, unzip, and read a TEMP file
+#temp <- tempfile()
+#download.file("https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2Fhousehold_power_consumption.zip",temp)
+#     data <- read.table( unz( temp, "household_power_consumption.txt" )
+#                        , nrows = 100000
+#                        , sep = ";"
+#                        , header = TRUE
+#     )
+# unlink(temp)
+} else { # use your local file
+
+    data <- read.table( "household_power_consumption.txt"
+                        , nrows = 100000
+                        , sep = ";"
+                        , header = TRUE
+    )
+}
 
 # create a datetime field
 data$DateTime <- strptime(paste(data$Date, data$Time),format="%d/%m/%Y %H:%M:%S")
@@ -30,9 +46,14 @@ head( weekdays( relevant$DateTime, abbreviate = TRUE ) )
 
 relevant$DayOfWeek <- weekdays( relevant$DateTime, abbreviate = TRUE )
 
-
-#head(relevant)
-#tail(relevant)
+# testing:
+# head( sort(relevant$Global_active_power, decreasing= TRUE) )                 # RAW
+# head( sort( as.numeric( relevant$Global_active_power, decreasing= TRUE ) ) ) # NOT RIGHT
+# head( as.numeric( as.character(relevant$Global_active_power ) ) )            # RIGHT
+# min( as.numeric( as.character(relevant$Global_active_power ) ) )
+# max( as.numeric( as.character(relevant$Global_active_power ) ) )
+# head(relevant)
+# tail(relevant)
 
 
 # open a PNG device
@@ -40,13 +61,13 @@ png(file = "plot2.png", bg = "transparent", width = 480, height = 480)
 
 
 # create the plot
-plot( relevant$DateTime, as.numeric( relevant$Global_active_power ) / 550, 
+plot( relevant$DateTime, as.numeric( as.character(relevant$Global_active_power ) ), 
       type = "n",
       , ylab = "Global Active Power (kilowatts)"
       
       , xlab = ""
 )
-lines( relevant$DateTime, as.numeric( relevant$Global_active_power ) / 550)
+lines( relevant$DateTime, as.numeric( as.character(relevant$Global_active_power ) ) )
 axis(2, seq( by= 2,from = 0, to = 6 ) )
 
 
