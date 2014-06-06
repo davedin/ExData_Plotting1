@@ -1,15 +1,25 @@
 # setwd('C:/www/r/exdata-project1')
 
 # download, unzip, and read file
-temp <- tempfile()
-download.file("https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2Fhousehold_power_consumption.zip",temp)
-data <- read.table( unz( temp, "household_power_consumption.txt" )
-                   , nrows = 100000
-                   , sep = ";"
-                   #   , colClasses = c("POSIXct", "POSIXct","numeric")
-                   , header = TRUE
-)
-unlink(temp)
+if( !file.exists("household_power_consumption.txt") ) { # go get the file
+    
+    download.file("https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2Fhousehold_power_consumption.zip","household_power_consumption.zip")
+    unzip( "household_power_consumption.zip")
+    data <- read.table( "household_power_consumption.txt"
+                        , nrows = 100000
+                        , sep = ";"
+                        , header = TRUE
+    )
+    
+} else { # use your local file
+    
+    data <- read.table( "household_power_consumption.txt"
+                        , nrows = 100000
+                        , sep = ";"
+                        , header = TRUE
+    )
+    
+}
 
 
 # create a datetime field
@@ -39,7 +49,7 @@ relevant$DayOfWeek <- weekdays( relevant$DateTime, abbreviate = TRUE )
 png(file = "plot3.png", bg = "transparent", width = 480, height = 480)
 
 # create the plot
-plot( relevant$DateTime, as.numeric( relevant$Sub_metering_1) , 
+plot( relevant$DateTime, as.numeric( as.character( relevant$Sub_metering_1) ), 
       type = "n",
       , ylab = "Energy sub metering"
       , ylim = c(0,30)
@@ -47,11 +57,11 @@ plot( relevant$DateTime, as.numeric( relevant$Sub_metering_1) ,
 )
 legend( "topright"
        , legend = c("Sub_metering_1", "Sub_metering_2", "Sub_metering_3")
-       , col = c("black", "orange", "blue"),  pch = "-"
+       , col = c("black", "red", "blue"),  pch = c("_____",3,4)
 )
-lines( relevant$DateTime, as.numeric( relevant$Sub_metering_1 ), col = "black")
-lines( relevant$DateTime, as.numeric( relevant$Sub_metering_2 ), col = "orange" )
-lines( relevant$DateTime, as.numeric( relevant$Sub_metering_3 ), col = "blue" )
+lines( relevant$DateTime, as.numeric( as.character( relevant$Sub_metering_1 ) ), col = "black")
+lines( relevant$DateTime, as.numeric( as.character( relevant$Sub_metering_2 ) ), col = "red" )
+lines( relevant$DateTime, as.numeric( as.character( relevant$Sub_metering_3 ) ), col = "blue" )
 
 
 axis(2, seq( by= 10,from = 0, to = 30 ) )
